@@ -1,0 +1,150 @@
+<html>
+<head>
+  <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Roboto', sans-serif;
+    }
+    body {
+      width: 600px;
+      height: 400px;
+    }
+    input {
+      border: 1px solid #999999;
+      margin: 2px;
+    }
+    #add_server {
+      float: right;
+    }
+    #server_data {
+      display: none;
+      background-color: #f0f0f0;
+      position: relative;
+      border: 1px solid #aaaaaa;
+      padding: 5px;
+    }
+    #url {
+      width: calc(100% - 4px);
+      padding: 8px;
+      margin-bottom: 0px;
+    }
+    #key {
+      width: calc(100% - 4px);
+      padding: 8px;
+      margin-bottom: 0px;
+    }
+    #add_button {
+      padding: 8px;
+      float: right;
+      width: 80px;
+    }
+    #servers_list {
+      width: 100%;
+      !border: 1px solid #19afcc;
+    }
+    .server {
+      color: #555555;
+      position: relative;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #aaaaaa;
+    }
+    .server a {
+      color: #777777;
+      text-decoration: none;
+    }
+    .issue a {
+      color: #777777;
+      text-decoration: none;
+    }
+    li.selected {
+      background-color: #AF4C50;
+      color: white;
+    }
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #333;
+    }
+
+    li {
+      float: left;
+      cursor: pointer;
+    }
+
+    li a {
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    /* Change the link color to #111 (black) on hover */
+    li a:hover {
+      background-color: #111;
+    }
+    #servers {
+      display: none;
+    }
+    h1 {
+      text-align: right;
+      font-size: 18px;
+      margin-right: 5px;
+      font-weight: bold;
+      color: #333333;
+    }
+    .titulo {
+      font-size: 16px;
+    }
+    .info {
+      font-size: 12px;
+    }
+    .issue {
+      margin-top: 8px;
+      padding: 8px;
+      border: 1px solid #dddddd;
+      box-shadow: 2px 2px 5px #AAAAAA;
+      cursor: pointer;
+      position: relative;
+    }
+    .user {
+      background-color: #CF6E72;
+      color: white;
+    }
+  </style>
+  <script></script>
+</head>
+<body>
+  <ul>
+    <li class="selected" divid="changes_container" ignorar="false"><a>Changes</a></li>
+    <li divid="servers" id="se_bu" ignorar="false"><a>Servers</a></li>
+    <li id="add_server" ignorar="true"><a>Add Server</a></li>
+  </ul>
+  <div id="changes_container">
+    <h1>Last Changes</h1>
+    <div id="changes">
+    </div>
+  </div>
+
+  <div id="servers">
+    <div id="server_data">
+      <input type="text" id="url" name="url" placeholder="Project URL" />
+      <input type="text" id="key" name="key" placeholder="User Token"/>
+      <input type="button" id="add_button" name="add_button" value="Add" />
+      <div style="clear:both;"></div>
+    </div>
+    <h1>Servers</h1>
+    <div id="servers_list"></div>
+  </div>
+
+  <script type="text/javascript" src="functions.js"></script>
+  <script type="text/javascript" src="popup.js"></script>
+</body>
+</html>
