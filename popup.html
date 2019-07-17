@@ -1,6 +1,7 @@
 <html>
 <head>
   <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src ="jquery-confirm"></script>
   <meta charset="utf-8">
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <style>
@@ -15,7 +16,32 @@
       border: 1px solid #999999;
       margin: 2px;
     }
-    #add_server {
+    #add_server {   
+      height: 22px;
+      line-height: 10px;
+      border-radius: 3.5px;
+      float: right;        
+      margin-right: 9px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+      color: #fff;    
+      background-color: #333333;
+      text-align: center;      
+      box-shadow: 2.5px 1.5px 5px 0 rgba(0,0,0,0.24),0 2px 2px 0 rgba(0,0,0,0.19);
+      cursor: pointer;
+    }
+
+    #add_server:hover {   
+      background-color: #AF4C50;
+    }
+    
+    #clean_bu {
+      float: right;
+    }
+    #toMe {
+      float: right;			
+    }
+    #open_all{
       float: right;
     }
     #server_data {
@@ -24,6 +50,8 @@
       position: relative;
       border: 1px solid #aaaaaa;
       padding: 5px;
+      top: 5px;
+      margin-bottom: 10px;
     }
     #url {
       width: calc(100% - 4px);
@@ -39,8 +67,10 @@
       padding: 8px;
       float: right;
       width: 80px;
+      box-shadow: 1px 1px 5px 0 rgba(0,0,0,0.24),0 2px 2px 0 rgba(0,0,0,0.19);
+      
     }
-    #servers_list {
+    #servers_list {      
       width: 100%;
       !border: 1px solid #19afcc;
     }
@@ -86,6 +116,17 @@
       text-decoration: none;
     }
 
+		.msg{
+      position: absolute;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      top: calc(50% - 20px);
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+		}	
+		
     /* Change the link color to #111 (black) on hover */
     li a:hover {
       background-color: #111;
@@ -93,6 +134,20 @@
     #servers {
       display: none;
     }
+		#to_me {
+			display: none;
+		}
+    #span_servers {
+      height: 46px;
+      line-height: 46px;
+      text-align: right;
+      font-size: 18px;
+      margin-right: 5px;
+      font-weight: bold;
+      color: #333333;
+      float: right;
+    }
+    
     h1 {
       text-align: right;
       font-size: 18px;
@@ -118,29 +173,56 @@
       background-color: #CF6E72;
       color: white;
     }
+    .server-link {
+      color: #333333 !important;
+    }
+    .server-link:hover {
+      text-decoration: underline;
+    }
   </style>
   <script></script>
 </head>
 <body>
   <ul>
     <li class="selected" divid="changes_container" ignorar="false"><a>Changes</a></li>
+    <li divid="to_me" id="toMe_bu" ignorar="false"><a>To Me</a></li>
     <li divid="servers" id="se_bu" ignorar="false"><a>Servers</a></li>
-    <li id="add_server" ignorar="true"><a>Add Server</a></li>
+    <!--
+    <li id="add_server" ignorar="true"><a>Add Server</a></li>  
+    -->
+    <li id="clean_bu" ignorar="true"><a>Clean</a></li>
+    <li id="open_all" ignorar="true"><a>Open All</a></li>
   </ul>
+
   <div id="changes_container">
     <h1>Last Changes</h1>
     <div id="changes">
     </div>
   </div>
+    
+	<div id="to_me">
+    <h1>To Me</h1>
+    <div id="changesToMe">
+    </div>
+  </div>
 
   <div id="servers">
-    <div id="server_data">
+    <div style="clear:both;">   
+    <!-- <h1>Servers</h1> -->
+    <span id="span_servers">Servers</span>
+      
+    </div >    
+    <input type="button" id="add_server" ignorar="true" value="Add Server"/>
+    
+    <div style="clear:both;"></div>
+    <div id="server_data">          
       <input type="text" id="url" name="url" placeholder="Project URL" />
       <input type="text" id="key" name="key" placeholder="User Token"/>
       <input type="button" id="add_button" name="add_button" value="Add" />
       <div style="clear:both;"></div>
     </div>
-    <h1>Servers</h1>
+    
+    
     <div id="servers_list"></div>
   </div>
 

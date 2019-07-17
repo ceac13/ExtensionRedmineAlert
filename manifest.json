@@ -1,9 +1,9 @@
 {
   "name": "Redmine Alert",
-  "version": "1.3",
+  "version": "1.9.1",
   "description": "",
   "permissions": [
-    "http://*/"
+    "<all_urls>"
   ],
   "browser_action": {
       "default_title": "Redmine Alert",

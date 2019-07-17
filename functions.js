@@ -1,8 +1,18 @@
-function showDiv(element) {
+function showDiv(element) { 
+  
   if (element.attr("ignorar") != "true") {
     $("li").removeClass("selected");
     element.addClass("selected");
     var div = element.attr("divid");
+    console.log("Enter." + div + " " + $("#" + div).find(".issue").length);
+    if( $("#" + div).find(".issue").length == 0 ) {
+      $("#open_all").fadeOut();
+      $("#clean_bu").fadeOut();
+    }
+    else {
+      $("#open_all").fadeIn();
+      $("#clean_bu").fadeIn();
+    }
     $("li").each(function() {
       var divid = $(this).attr("divid");
       $("#" + divid).hide();
@@ -100,7 +110,7 @@ function printServer() {
   if (servers != null) {
     for (var i = 0; i < servers.length; i++) {
       var o = servers[i];
-      html += "<div class='server'><strong>URL: </strong>" + o.url + "<br /><strong>Token: </strong>" + o.key;
+      html += "<div class='server'><strong>URL: </strong><a class='server-link' href='" + o.url + "' target='_blank'>" + o.url + "</a><br /><strong>Token: </strong>" + o.key;
       html += "<div style='position: absolute; top: 5; right: 5;'><a class='remover' position='" + i + "' href=''>x</a></div>";
       html += "</div>";
     }
@@ -163,6 +173,13 @@ function getURLIssue(url, id) {
   return newURL;
 }
 
+function getURLIssueJson(url, id, key) {
+  var pos = url.search("projects/");
+  var newURL = url.substring(0, pos);
+  newURL += "issues/" + id + ".json?include=journals&key=" + key;
+  return newURL;
+}
+
 function showNumberOfChanges() {
   var length = getIssuesChanged().length;
   if (length == 0)
@@ -170,6 +187,8 @@ function showNumberOfChanges() {
   else
     chrome.browserAction.setBadgeText({text: "" + length});
 }
+
+
 
 function getUserInfo(url, key) {
   var pos = url.search("projects/");
@@ -204,11 +223,16 @@ function getLastChanges(server) {
       if (lt > lastChange) {
         issues[i].url = getURLIssue(server.url, issues[i].id);
         issues[i].userId = getUserId(server.url);
-        addIssueChanged(issues[i]);
-        // Sound
-        var myAudio = new Audio();
-        myAudio.src = "audio/alerta.mp3";
-        myAudio.play();
+
+        var userIdLastUpdate = getUserIdLastUpdate(server.url, issues[i].id, server.key);
+
+        if (userIdLastUpdate == null || issues[i].userId != userIdLastUpdate) {
+          addIssueChanged(issues[i]);
+          // Sound
+          var myAudio = new Audio();
+          myAudio.src = "audio/alerta.mp3";
+          myAudio.play();
+        }
       }
     }
 
@@ -220,6 +244,24 @@ function getLastChanges(server) {
       }
     }
   });
+}
+
+function getUserIdLastUpdate(url, id, key) {
+  var url = getURLIssueJson(url, id, key);
+
+  var json = $.ajax({
+    type: "GET",
+    url: url,
+    cache: false,
+    async: false
+  }).responseText;
+
+  var data = JSON.parse(json);
+
+  if (data.issue.journals == null || data.issue.journals.length == 0) {
+    return null;
+  }
+  return data.issue.journals[data.issue.journals.length - 1].user.id;
 }
 
 function checkChanges() {
@@ -271,28 +313,55 @@ function removeIssueChanged(id) {
 
 function printIssuesChanged() {
   var issues = getIssuesChanged();
+	var htmlToMe = "";
   var html = "";
+  var voidToMe = true;
+		
   for (var i = 0; i < issues.length; i++) {
     var classAtribuidoAutor = "";
     if ((issues[i].assigned_to != null && issues[i].userId == issues[i].assigned_to.id) || issues[i].userId == issues[i].author.id)
       classAtribuidoAutor = " user";
-    html += "<div class='issue" + classAtribuidoAutor + "' issue_id='" + issues[i].id + "' style='position: relative;'>";
-    html += "<a href='" + issues[i].url + "'></a>";
-    html += "<span class='titulo'>#" + issues[i].id + " - " + issues[i].subject + "</span><br />";
-    html += "<span class='info'>";
+		var linha = "";
+			
+    linha += "<div class='issue" + classAtribuidoAutor + "' issue_id='" + issues[i].id + "' style='position: relative;'>";
+    linha += "<a href='" + issues[i].url + "'></a>";
+    linha += "<span class='titulo'>#" + issues[i].id + " - " + issues[i].subject + "</span><br />";
+    linha += "<span class='info'>";
     if (issues[i].assigned_to != null)
-      html += "<strong>Assigned to: </strong>" + issues[i].assigned_to.name + "<br />";
-    html += "<strong>Updated on: </strong>" + getTimeLocale(issues[i].updated_on);
-    html += "</span>";
-    html += "<div style='position: absolute; top: 5; right: 5;'><a class='remover_issue' issue_id='" + issues[i].id + "' href=''>x</a></div>";
-    html += "</div>";
+        linha += "<strong>Assigned to: </strong>" + issues[i].assigned_to.name + "<br />";
+    linha += "<strong>Updated on: </strong>" + getTimeLocale(issues[i].updated_on) + "<br />";
+    linha += "<strong>Status: </strong>" + issues[i].status.name;
+    linha += "</span>";
+    linha += "<div style='position: absolute; top: 5; right: 5;'><a class='remover_issue' issue_id='" + issues[i].id + "' href=''>x</a></div>";
+    linha += "</div>";
+		
+		html += linha;
+		if (classAtribuidoAutor != ""){
+			 	htmlToMe += linha;
+        voidToMe = false;
+    }		
+		
   }
-  $("#changes").html(html);
+  
+  
+  
+	if (issues.length == 0) {
+    $("#changes").html("<div class = 'msg' > Empty List! </div>");
+    $("#changesToMe").html("<div class = 'msg' > Empty List! </div>");
+  }
+	else
+		$("#changes").html(html);
+	  
+  if (voidToMe)
+    $("#changesToMe").html("<div class = 'msg' > Empty List! </div>");
+  else
+    $("#changesToMe").html(htmlToMe);
+  
   $(".issue").each(function() {
     $(this).click(function() {
       var id = $(this).attr("issue_id");
       removeIssueChanged(id);
-      chrome.tabs.create({ url: $(this).find("a").first().attr("href") });
+      chrome.tabs.create({ url: $(this).find("a").first().attr("href")});
     });
   });
 
